@@ -46,10 +46,7 @@ services:
 
   messaging:
     container_name: messaging
-    image: messaging
-    build:
-      context: ./messaging
-      dockerfile: Dockerfile
+    image: jccl/messaging:latest
     environment:
       - DEFAULT_PROCESSOR_URL=http://payment-processor-default:8080
       - FALLBACK_PROCESSOR_URL=http://payment-processor-fallback:8080
@@ -65,11 +62,8 @@ services:
       - postgres
 
   processor-api-1:
-    image: processor-api
+    image: jccl/processor-api:latest
     container_name: processor-api-1
-    build:
-      context: ./processor
-      dockerfile: Dockerfile
     networks:
       - backend
       - payment-processor
@@ -90,11 +84,8 @@ services:
       - messaging
 
   processor-api-2:
-    image: processor-api
+    image: jccl/processor-api
     container_name: processor-api-2
-    build:
-      context: ./processor
-      dockerfile: Dockerfile
     networks:
       - backend
       - payment-processor
