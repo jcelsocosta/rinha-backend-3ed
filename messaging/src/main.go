@@ -25,8 +25,9 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println("started")
-	defer dbInstance.Close()
+
 	RunDB()
+
 	for i := 0; i < 5; i++ {
 		go RunWorker()
 	}
