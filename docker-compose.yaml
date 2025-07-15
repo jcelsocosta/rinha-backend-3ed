@@ -1,7 +1,7 @@
 services:
   load-balancer:
     image: traefik:v3.0
-    container_name: traefik
+    container_name: jccl-traefik
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -52,7 +52,9 @@ services:
 
   messaging:
     container_name: messaging
-    image: jccl/messaging:latest
+    build:
+      context: ./messaging
+      dockerfile: Dockerfile
     environment:
       - DEFAULT_PROCESSOR_URL=http://payment-processor-default:8080
       - FALLBACK_PROCESSOR_URL=http://payment-processor-fallback:8080

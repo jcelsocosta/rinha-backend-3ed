@@ -21,18 +21,12 @@ func RunHealthCkeck() {
 			fmt.Println(err)
 		}
 
-		if respDefault != nil && !respDefault.Failing && respFallback != nil && !respFallback.Failing {
+		if respDefault != nil && respFallback != nil {
 			if respDefault.MinResponseTime > respFallback.MinResponseTime {
 				selectedOrigin.Store(2)
 			} else {
 				selectedOrigin.Store(1)
 			}
-		} else if respDefault != nil && !respDefault.Failing {
-			selectedOrigin.Store(1)
-		} else if respFallback != nil && !respFallback.Failing {
-			selectedOrigin.Store(2)
-		} else {
-			selectedOrigin.Store(0)
 		}
 		time.Sleep(5 * time.Second)
 	}
@@ -69,7 +63,6 @@ func RunWorker() {
 				SaveMessage(message.CorrelationId, message.Amount, now, FALLBACK)
 			}
 		default:
-			channelMsg <- message
 		}
 	}
 }

@@ -28,6 +28,10 @@ func HealthCkeckDefaultRequest() (*healthResponse, error) {
 	}
 	defer response.Body.Close()
 
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("fallback healthcheck falhou: status %d", response.StatusCode)
+	}
+
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		fmt.Println("Erro ao ler resposta:", err)
@@ -81,12 +85,16 @@ func PaymentProcesorDefaultRequest(correlationId string, amount float64, request
 // =================================================== Fallback =======================================
 
 func HealthCkeckFallbackRequest() (*healthResponse, error) {
-	url := fmt.Sprintf("%s%s", defaultProcessorURL, "/payments/service-health")
+	url := fmt.Sprintf("%s%s", fallbackProcessorURL, "/payments/service-health")
 	response, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("fallback healthcheck falhou: status %d", response.StatusCode)
+	}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {

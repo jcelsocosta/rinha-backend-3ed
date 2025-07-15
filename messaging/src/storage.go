@@ -30,9 +30,9 @@ func openDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(100)
-	db.SetMaxIdleConns(10)
-	db.SetConnMaxLifetime(time.Minute * 5)
+	db.SetMaxOpenConns(90)
+	db.SetMaxIdleConns(20)
+	db.SetConnMaxLifetime(5 * time.Minute)
 
 	dbInstance = db
 	return dbInstance, nil
