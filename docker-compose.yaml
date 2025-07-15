@@ -52,9 +52,7 @@ services:
 
   messaging:
     container_name: messaging
-    build:
-      context: ./messaging
-      dockerfile: Dockerfile
+    image: jccl/messaging:latest
     environment:
       - DEFAULT_PROCESSOR_URL=http://payment-processor-default:8080
       - FALLBACK_PROCESSOR_URL=http://payment-processor-fallback:8080
