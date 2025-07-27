@@ -78,7 +78,6 @@ func PaymentProcesorDefaultRequest(correlationId string, amount float64, request
 	if response.StatusCode != http.StatusOK {
 		return fmt.Errorf("requisição retornou status %d", response.StatusCode)
 	}
-
 	return nil
 }
 
@@ -143,6 +142,5 @@ func PaymentProcesorFallbackRequest(correlationId string, amount float64, reques
 	if response.StatusCode != http.StatusOK {
 		return fmt.Errorf("requisição retornou status %d", response.StatusCode)
 	}
-
 	return nil
 }

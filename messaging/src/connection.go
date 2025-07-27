@@ -39,7 +39,6 @@ func handleConnection(conn net.Conn) {
 
 		select {
 		case channelMsg <- *message:
-			// enviado com sucesso
 		default:
 			log.Println("Erro: canal cheio, mensagem descartada:", message.CorrelationId)
 		}

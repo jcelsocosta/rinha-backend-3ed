@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var channelMsg = make(chan MessageParser, 50000)
+var channelMsg = make(chan MessageParser, 30000)
 
 var selectedOrigin atomic.Uint32
 
@@ -27,6 +27,12 @@ func RunHealthCkeck() {
 			} else {
 				selectedOrigin.Store(1)
 			}
+		} else if respDefault != nil && respFallback == nil {
+			selectedOrigin.Store(1)
+		} else if respDefault == nil && respFallback != nil {
+			selectedOrigin.Store(2)
+		} else {
+			selectedOrigin.Store(0)
 		}
 		time.Sleep(5 * time.Second)
 	}
@@ -49,20 +55,31 @@ func RunWorker() {
 		case DEFAULT:
 			err := PaymentProcesorDefaultRequest(message.CorrelationId, message.Amount, now)
 			if err != nil {
-				channelMsg <- message
-				return
+				selectedOrigin.Store(2)
+				err := PaymentProcesorFallbackRequest(message.CorrelationId, message.Amount, now)
+				if err != nil {
+					channelMsg <- message
+				} else {
+					SaveMessage(message.CorrelationId, message.Amount, now, FALLBACK)
+				}
 			} else {
 				SaveMessage(message.CorrelationId, message.Amount, now, DEFAULT)
 			}
 		case FALLBACK:
 			err := PaymentProcesorFallbackRequest(message.CorrelationId, message.Amount, now)
 			if err != nil {
-				channelMsg <- message
-				return
+				selectedOrigin.Store(1)
+				err := PaymentProcesorDefaultRequest(message.CorrelationId, message.Amount, now)
+				if err != nil {
+					channelMsg <- message
+				} else {
+					SaveMessage(message.CorrelationId, message.Amount, now, DEFAULT)
+				}
 			} else {
 				SaveMessage(message.CorrelationId, message.Amount, now, FALLBACK)
 			}
 		default:
+			channelMsg <- message
 		}
 	}
 }
